@@ -36,6 +36,7 @@ public class CollisionDetector : MonoBehaviour
     {
         if (currentCollider != null)
         {
+            print($"Interacting with {currentCollider.name}");
             // 1. Check for Collectibles
             var collectible = currentCollider.GetComponent<Collectible>();
             if (collectible != null)

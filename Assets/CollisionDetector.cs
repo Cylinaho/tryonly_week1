@@ -42,6 +42,15 @@ public class CollisionDetector : MonoBehaviour
             if (collectible != null)
             {
                 score += collectible.scoreValue;
+
+                print($"★ Item Collected! Current Score: {score} / {totalItemsToCollect}");
+
+                // Check if the player won
+                if (score >= totalItemsToCollect)
+                {
+                    print("🏆 You collected all items! You win!");
+                }
+                
                 collectible.Collect();
                 currentCollider = null; // Clear this so we don't click it twice
                 return; // Exit here so we don't check for doors on a dead object

@@ -1,11 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// 1. Move the interface OUTSIDE the class so other scripts can easily implement it
+public interface IInteractable
+{
+    int Interact(); 
+}
+
 public class CollisionDetector : MonoBehaviour
 {
-    int score = 0;
+    private int score = 0;
     public int totalItemsToCollect = 1;
-    GameObject currentCollider;
+    private GameObject currentCollider;
 
     void OnCollisionEnter(Collision collision)
     {
@@ -14,7 +20,6 @@ public class CollisionDetector : MonoBehaviour
 
     void OnCollisionExit(Collision collision)
     {
-        // Only clear if we are leaving the SPECIFIC object we are touching
         if (currentCollider == collision.gameObject)
             currentCollider = null;
     }
@@ -27,7 +32,6 @@ public class CollisionDetector : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        // Only clear if we are leaving the SPECIFIC trigger
         if (currentCollider == other.gameObject)
             currentCollider = null;
     }
@@ -37,26 +41,25 @@ public class CollisionDetector : MonoBehaviour
         if (currentCollider != null)
         {
             print($"Interacting with {currentCollider.name}");
+
             // 1. Check for Collectibles
             var collectible = currentCollider.GetComponent<Collectible>();
             if (collectible != null)
             {
                 score += collectible.scoreValue;
-
                 print($"★ Item Collected! Current Score: {score} / {totalItemsToCollect}");
 
-                // Check if the player won
                 if (score >= totalItemsToCollect)
                 {
                     print("🏆 You collected all items! You win!");
                 }
                 
                 collectible.Collect();
-                currentCollider = null; // Clear this so we don't click it twice
-                return; // Exit here so we don't check for doors on a dead object
+                currentCollider = null; 
+                return; 
             }
 
-            // 2. Check for Doors (Check the object OR its parent)
+            // 2. Check for Doors
             var door = currentCollider.GetComponent<Door>();
             if (door == null) door = currentCollider.GetComponentInParent<Door>();
 
@@ -64,7 +67,36 @@ public class CollisionDetector : MonoBehaviour
             {
                 print($"Interacting with a Door: {currentCollider.name}");
                 door.Interact();
+                return;
             }
+
+            // 3. Check for Ball physics
+            if (currentCollider.CompareTag("Ball"))
+            {
+                print("Kicking the ball!");
+                var ball = currentCollider.GetComponent<Rigidbody>();
+                if (ball != null)
+                {
+                    ball.AddForce(transform.forward * 50f + new Vector3(0, 50f, 0));
+                }
+                return;
+            }
+
+            // 4. Check for Generic IInteractable interface
+            var interactable = currentCollider.GetComponent<IInteractable>();
+            if (interactable != null)
+            {
+                score += interactable.Interact();
+                print($"Total Score: {score}");
+                
+                // Commented out to prevent errors if MyUIManager doesn't exist yet
+                // MyUIManager.UpdateScore(score);
+                return;
+            }
+        }
+        else
+        {
+            print("Nothing to interact with at the moment!");
         }
     }
 

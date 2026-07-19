@@ -601,7 +601,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!195 &931489106
 NavMeshAgent:
@@ -732,8 +732,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05af03263de81ba4a99a1d7837fc3554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  visionRange: 3
-  visionAngle: 45
+  visionRange: 30
+  visionAngle: 160
   player: {fileID: 1066679485}
 --- !u!4 &1066679485 stripped
 Transform:
